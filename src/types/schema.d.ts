@@ -2,10 +2,10 @@
 // graphql typescript definitions
 
 declare namespace GQL {
-      interface IGraphQLResponseRoot {
-            data?: IQuery | IMutation;
-            errors?: Array<IGraphQLResponseError>;
-      }
+interface IGraphQLResponseRoot {
+data?: IQuery | IMutation;
+errors?: Array<IGraphQLResponseError>;
+}
 
 interface IGraphQLResponseError {
 /** Required for all errors */
@@ -22,6 +22,7 @@ column: number;
 
 interface IQuery {
 __typename: "Query";
+bye: string | null;
 hello: string;
 }
 
@@ -31,12 +32,18 @@ name?: string | null;
 
 interface IMutation {
 __typename: "Mutation";
-register: boolean | null;
+register: Array<IError>;
 }
 
 interface IRegisterOnMutationArguments {
 email: string;
 password: string;
+}
+
+interface IError {
+__typename: "Error";
+path: string;
+message: string;
 }
 }
 

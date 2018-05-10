@@ -3,12 +3,15 @@ import { createTypeormConn } from './createTypeormConn';
 import { User } from '../entity/User';
 import * as Redis from 'ioredis';
 import fetch, { Response } from 'node-fetch';
+import { Connection } from 'typeorm';
 
 let userId: string;
 const redis = new Redis();
 
+let conn: Connection;
+
 beforeAll(async () => {
-      await createTypeormConn();
+      conn = await createTypeormConn();
       const user = await User
       .create({
             email: "bob5@bob.com",
@@ -17,9 +20,12 @@ beforeAll(async () => {
       .save();
 
       userId = user.id;
-})
+});
 
-describe("이메일 링크 생성 테스트", () => {
+afterAll(() => {
+      conn.close();
+});
+
 
       test("이메일 링크 작동 확인", async () => {
             
@@ -46,10 +52,5 @@ describe("이메일 링크 생성 테스트", () => {
             expect(findUserId).toBeNull();
       });
 
-      test("잘못된 id를 보내 에러 발생", async () => {
-            const response = await fetch(`${process.env.TEST_HOST}/confirm/12353`);
-            const text = await response.text();
-            expect(text).toEqual("Invalid");
-      })
+      
 
-})
